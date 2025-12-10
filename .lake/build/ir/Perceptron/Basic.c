@@ -30,6 +30,7 @@ static lean_object* l_Perceptron_xor__gate__data___closed__4;
 static lean_object* l_Perceptron_or__gate__data___closed__10;
 static lean_object* l_Perceptron_or__gate__data___closed__6;
 static lean_object* l_Perceptron_or__gate__data___closed__7;
+LEAN_EXPORT lean_object* l_Perceptron_train__until__convergence_train(lean_object*, lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_Perceptron_update(lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_Perceptron_and__gate__data___lam__1___boxed(lean_object*, lean_object*, lean_object*);
 lean_object* l_Nat_cast___at___00Tactic_NormNum_evalRealSqrt_spec__4(lean_object*);
@@ -71,7 +72,6 @@ LEAN_EXPORT lean_object* l_Perceptron_and__gate__data___lam__0(lean_object*);
 LEAN_EXPORT lean_object* l_Perceptron_train__epoch(lean_object*, lean_object*, lean_object*);
 static lean_object* l_Perceptron_or__gate__data___closed__11;
 static lean_object* l_Perceptron_or__gate__data___closed__2;
-LEAN_EXPORT lean_object* l_Perceptron_train__until__convergence_go(lean_object*, lean_object*, lean_object*, lean_object*);
 lean_object* l_augment(lean_object*, lean_object*, lean_object*);
 lean_object* lean_nat_add(lean_object*, lean_object*);
 static lean_object* l_Perceptron_xor__gate__data___closed__0;
@@ -325,7 +325,7 @@ x_5 = lean_box(x_4);
 return x_5;
 }
 }
-LEAN_EXPORT lean_object* l_Perceptron_train__until__convergence_go(lean_object* x_1, lean_object* x_2, lean_object* x_3, lean_object* x_4) {
+LEAN_EXPORT lean_object* l_Perceptron_train__until__convergence_train(lean_object* x_1, lean_object* x_2, lean_object* x_3, lean_object* x_4) {
 _start:
 {
 lean_object* x_5; uint8_t x_6; 
@@ -374,7 +374,7 @@ _start:
 {
 lean_object* x_4; lean_object* x_5; 
 x_4 = l_Perceptron_init__state(x_1);
-x_5 = l_Perceptron_train__until__convergence_go(x_1, x_2, x_4, x_3);
+x_5 = l_Perceptron_train__until__convergence_train(x_1, x_2, x_4, x_3);
 return x_5;
 }
 }

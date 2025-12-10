@@ -37,12 +37,16 @@ def train_epoch {n : ℕ} (state : State n) (data : List (LabeledPoint n)) : Sta
 def all_correct? {n : ℕ} (p : T n) (data : List (LabeledPoint n)) : Bool :=
   data.all (correct? p)
 
-def train_until_convergence {n : ℕ} (data : List (LabeledPoint n)) (maxIter : ℕ) : State n :=
-  let rec go (state : State n) (remaining : ℕ) : State n :=
+def train_until_convergence {n : ℕ} (data : List (LabeledPoint n)) (max_iter : ℕ) : State n :=
+  let rec train (state : State n) (remaining : ℕ) : State n :=
     match remaining with
     | 0 => state
-    | k + 1 => if all_correct? state.perceptron data then state else go (train_epoch state data) k
-  go (init_state n) maxIter
+    | k + 1 =>
+      if all_correct? state.perceptron data then
+        state
+      else
+        train (train_epoch state data) k
+  train (init_state n) max_iter
 
 /- Examples -/
 

@@ -21,10 +21,10 @@ def min_margin {n : ℕ} (wStar : Fin (n + 1) → ℚ) (data : List (LabeledPoin
   | dp :: rest => rest.foldl (fun acc dp => min acc (margin wStar dp)) (margin wStar dp)
 
 -- w* = (3/5, 4/5, 0), ||w*||² = 9/25 + 16/25 = 1
-def wStar : Fin 3 → ℚ := ![3/5, 4/5, 0]
+def w_star : Fin 3 → ℚ := ![3/5, 4/5, 0]
 
 def R_sq : ℚ := max_norm_sq example_data
-def γ : ℚ := min_margin wStar example_data
+def γ : ℚ := min_margin w_star example_data
 
 #eval R_sq
 #eval γ
@@ -37,17 +37,17 @@ theorem example_data_norm_bound : ∀ dp ∈ example_data, norm_sq (augment dp.f
 
 theorem γ_pos : γ > 0 := by native_decide
 
-theorem wStar_norm : norm_sq wStar = 1 := by
-  simp only [norm_sq, wStar, Fin.sum_univ_three]
+theorem w_star_norm : norm_sq w_star = 1 := by
+  simp only [norm_sq, w_star, Fin.sum_univ_three]
   native_decide
 
-theorem margin_wStar_ge_γ : ∀ dp ∈ example_data, margin wStar dp ≥ γ := by
+theorem margin_w_star_ge_γ : ∀ dp ∈ example_data, margin w_star dp ≥ γ := by
   intro dp hdp
   fin_cases hdp <;> native_decide
 
 theorem example_data_separable : separable example_data γ := by
   rw [separable]
-  exact ⟨wStar, wStar_norm, γ_pos, margin_wStar_ge_γ⟩
+  exact ⟨w_star, w_star_norm, γ_pos, margin_w_star_ge_γ⟩
 
 theorem example_data_valid_labels : valid_labels example_data := by
   intro dp hdp

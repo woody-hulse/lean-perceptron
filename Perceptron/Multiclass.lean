@@ -32,18 +32,18 @@ def init_state (num_classes num_features) : State num_classes num_features :=
 
 /- Train each binary perceptron on its corresponding data -/
 def train {num_classes num_features : ℕ}
-    (data : List (LabeledPoint num_features)) (maxIter : ℕ := 100)
+    (data : List (LabeledPoint num_features)) (max_iter : ℕ := 100)
     : State num_classes num_features :=
-  let oneVsAllData := to_one_vs_all (num_classes := num_classes) data
-  let initialState := init_state num_classes num_features
+  let one_vs_all_data := to_one_vs_all (num_classes := num_classes) data
+  let state := init_state num_classes num_features
   (List.finRange num_classes).foldl
     (fun state cls =>
-      let binaryData := oneVsAllData cls
-      let trainedState := Perceptron.train_until_convergence binaryData maxIter
-      let newStates :=
-        fun c => if c = cls then trainedState else state.states c
-      { states := newStates })
-    initialState
+      let binary_data := one_vs_all_data cls
+      let trained_state := Perceptron.train_until_convergence binary_data max_iter
+      let states' :=
+        fun c => if c = cls then trained_state else state.states c
+      { states := states' })
+    state
 
 def show_weights {num_classes num_features : ℕ}
   (mcp : T num_classes num_features)
@@ -73,45 +73,5 @@ def show_predictions (n : ℕ) (data : List (LabeledPoint n))
     let preds := predict state dp.features
     IO.println s!"Predictions: {preds}"
     show_labeled_point dp 28 170 |> IO.println
-
-#eval do
-  -- Load data
-  let num_features := 784
-  let data ← load_csv "mnist_pruned.csv" num_features
-  let smallData := data.take 10
-  IO.println s!"Loaded data with {data.length} samples and {num_features} features"
-
-  -- Train multiclass model
-  let num_classes := 10
-  let trained_state : State num_classes num_features :=
-    train (num_classes := num_classes) smallData
-  IO.println "Training completed."
-
-  -- Convergence steps per class
-  IO.println "Convergence steps per class:"
-  let convergences := show_convergences trained_state
-  convergences.forM IO.println
-
-  -- Show predictions
-  show_predictions num_features smallData trained_state
-
-  -- Show accuracy
-  let correct_counts :=
-    (List.finRange num_classes).map fun cls =>
-      let ts := trained_state.states cls
-      let binary_data := to_one_vs_all (num_classes := num_classes) smallData cls
-      let correct :=
-        binary_data.filter (fun dp => Perceptron.correct? ts.perceptron dp) |>.length
-      (cls.val, correct, binary_data.length)
-  IO.println "Accuracy per class (correct / total):"
-  correct_counts.forM fun (cls, correct, total) =>
-    IO.println s!"  Class {cls}: {correct} / {total}"
-
-  -- Show weights
-  IO.println "Perceptron weights:"
-  (List.finRange num_classes).forM fun cls => do
-    let ts := trained_state.states cls
-    let weights := weights_to_list ts.perceptron.weights
-    IO.println s!"  Perceptron {cls.val}: {weights}"
 
 end MultiClassPerceptron

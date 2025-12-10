@@ -81,3 +81,8 @@ def load_samples
 
 -- Sample usage
 #eval load_samples "mnist_pruned.csv" 3 28 170
+
+-- Define a base loaded MNIST dataset
+def mnist_num_features : ℕ := 784
+def mnist_num_classes : ℕ := 10
+initialize mnist_data : List (LabeledPoint 784) ← load_csv "mnist_pruned.csv" 784

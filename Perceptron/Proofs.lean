@@ -78,16 +78,16 @@ theorem alignment_after_updates {n : ℕ} (wStar : Fin (n + 1) → ℚ) (γ : �
 /- Update -/
 
 /-- A point is misclassified by weight vector w if y(w·x_aug) ≤ 0 -/
-def Misclassified {n : ℕ} (w : Fin (n + 1) → ℚ) (point : LabeledPoint n) : Prop :=
+def misclassified {n : ℕ} (w : Fin (n + 1) → ℚ) (point : LabeledPoint n) : Prop :=
   point.label * dot w (augment point.features) ≤ 0
 
 /-- Single update norm bound: if misclassified, ‖w'‖² ≤ ‖w‖² + ‖x_aug‖² -/
 theorem norm_sq_update_misclassified {n : ℕ} (w : Fin (n + 1) → ℚ) (p : LabeledPoint n)
-    (hlabel : valid_label p.label) (hmis : Misclassified w p) :
+    (hlabel : valid_label p.label) (hmis : misclassified w p) :
     norm_sq (fun i => w i + p.label * augment p.features i) ≤
     norm_sq w + norm_sq (augment p.features) := by
   rw [norm_sq_update_weights w p (valid_label.sq_eq_one hlabel)]
-  rw [Misclassified] at hmis
+  rw [misclassified] at hmis
   simp
   linarith
 
@@ -96,7 +96,7 @@ inductive ValidUpdateSeq {n : ℕ} :
   (Fin (n + 1) → ℚ) → List (LabeledPoint n) → (Fin (n + 1) → ℚ) → Prop where
   | nil : ∀ w, ValidUpdateSeq w [] w
   | cons : ∀ w p rest w_final,
-      Misclassified w p →
+      misclassified w p →
       ValidUpdateSeq (fun i => w i + p.label * augment p.features i) rest w_final →
       ValidUpdateSeq w (p :: rest) w_final
 

@@ -1,21 +1,21 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["c2c606e1d2f3a4ac.olean"],
-  "i": "c0f773eb4249ad92.ilean",
-  "c": "cc014283fd777387.c"},
+ {"o": ["1bafdc8ae97f8858.olean"],
+  "i": "d9286986f2dbb276.ilean",
+  "c": "d111e398eda7f617.c"},
  "log":
  [{"message":
    ".> LEAN_PATH=/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/Cli/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/batteries/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/Qq/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/aesop/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/importGraph/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/plausible/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/packages/mathlib/.lake/build/lib/lean:/Users/woodyhulse/Documents/lean-perceptron/.lake/build/lib/lean /Users/woodyhulse/.elan/toolchains/leanprover--lean4---v4.26.0-rc2/bin/lean /Users/woodyhulse/Documents/lean-perceptron/Perceptron/Basic.lean -o /Users/woodyhulse/Documents/lean-perceptron/.lake/build/lib/lean/Perceptron/Basic.olean -i /Users/woodyhulse/Documents/lean-perceptron/.lake/build/lib/lean/Perceptron/Basic.ilean -c /Users/woodyhulse/Documents/lean-perceptron/.lake/build/ir/Perceptron/Basic.c --setup /Users/woodyhulse/Documents/lean-perceptron/.lake/build/ir/Perceptron/Basic.setup.json --json",
    "level": "trace"},
   {"message":
-   "Perceptron/Basic.lean:70:0: (mkRat 2 1, mkRat 1 1, mkRat (-3) 1, 11, true)",
+   "Perceptron/Basic.lean:74:0: (mkRat 2 1, mkRat 1 1, mkRat (-3) 1, 11, true)",
    "level": "info"},
   {"message":
-   "Perceptron/Basic.lean:75:0: (mkRat 1 1, mkRat 1 1, mkRat (-1) 1, 5, true)",
+   "Perceptron/Basic.lean:79:0: (mkRat 1 1, mkRat 1 1, mkRat (-1) 1, 5, true)",
    "level": "info"},
   {"message":
-   "Perceptron/Basic.lean:80:0: (mkRat (-1) 1, mkRat 0 1, mkRat 0 1, 398, false)",
+   "Perceptron/Basic.lean:84:0: (mkRat (-1) 1, mkRat 0 1, mkRat 0 1, 398, false)",
    "level": "info"}],
  "inputs":
  [["Perceptron.Basic:deps",
@@ -34,11 +34,11 @@
   ["Lean 4.26.0, commit 9d4ad1273f6cea397c3066c2c83062a4410d16bf",
    "c1ab21c0a088cff7"],
   ["/Users/woodyhulse/Documents/lean-perceptron/Perceptron/Basic.lean",
-   "40c6f3441b08a49b"],
+   "86a0543f8a1b740b"],
   ["options",
    [["-DmaxSynthPendingDepth=3", "c78e353d34de85d4"],
     ["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
     ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "1c0826fdfba3f77d"}
+ "depHash": "4c4106acff994abb"}

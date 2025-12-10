@@ -32,6 +32,7 @@ lean_object* l___private_Init_Data_List_Impl_0__List_takeTR_go___redArg(lean_obj
 LEAN_EXPORT lean_object* l_show__labeled__point___boxed(lean_object*, lean_object*, lean_object*, lean_object*);
 static lean_object* l_show__labeled__point___closed__0;
 static lean_object* l_show__labeled__point___closed__1;
+LEAN_EXPORT lean_object* l_initFn_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2____boxed(lean_object*);
 static lean_object* l_show__labeled__point___closed__2;
 static lean_object* l_parse__data__lines___closed__0;
 lean_object* lean_string_utf8_byte_size(lean_object*);
@@ -48,11 +49,14 @@ lean_object* lean_nat_to_int(lean_object*);
 LEAN_EXPORT lean_object* l_parse__csv__line___boxed(lean_object*);
 LEAN_EXPORT lean_object* l_List_filterMapTR_go___at___00List_filterMapTR_go___at___00parse__data__lines_spec__0_spec__0(lean_object*, lean_object*, lean_object*);
 uint8_t l_Rat_blt(lean_object*, lean_object*);
+static lean_object* l_initFn___closed__0_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_;
+LEAN_EXPORT lean_object* l_mnist__data;
 LEAN_EXPORT lean_object* l_print__labeled__point(lean_object*, lean_object*, lean_object*, lean_object*);
 lean_object* lean_array_to_list(lean_object*);
 LEAN_EXPORT lean_object* l_load__csv___boxed(lean_object*, lean_object*, lean_object*);
 lean_object* lean_string_utf8_extract(lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_List_forM___at___00load__samples_spec__0(lean_object*, lean_object*, lean_object*, lean_object*);
+LEAN_EXPORT lean_object* l_initFn_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_();
 LEAN_EXPORT lean_object* l_vector__to__blocks__grid(lean_object*, lean_object*, lean_object*, lean_object*);
 static lean_object* l_show__labeled__point___closed__3;
 lean_object* l_IO_FS_readFile(lean_object*);
@@ -67,6 +71,7 @@ lean_object* lean_string_length(lean_object*);
 uint8_t lean_nat_dec_eq(lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_List_mapTR_loop___at___00vector__to__blocks_spec__0(lean_object*, lean_object*, lean_object*, lean_object*);
 uint8_t lean_nat_dec_lt(lean_object*, lean_object*);
+LEAN_EXPORT lean_object* l_mnist__num__features;
 uint8_t lean_uint32_dec_eq(uint32_t, uint32_t);
 LEAN_EXPORT lean_object* l_parse__data__lines___boxed(lean_object*, lean_object*);
 lean_object* l_IO_println___at___00Mathlib_Linter_TextBased_formatErrors_spec__0(lean_object*);
@@ -91,6 +96,7 @@ lean_object* lean_string_mk(lean_object*);
 LEAN_EXPORT lean_object* l_print__labeled__point___boxed(lean_object*, lean_object*, lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_parse__rat___boxed(lean_object*);
 lean_object* lean_nat_add(lean_object*, lean_object*);
+LEAN_EXPORT lean_object* l_mnist__num__classes;
 LEAN_EXPORT lean_object* l_List_mapTR_loop___at___00List_mapTR_loop___at___00vector__to__blocks__grid_spec__0_spec__0(lean_object*, lean_object*);
 lean_object* l_Rat_neg(lean_object*);
 LEAN_EXPORT lean_object* l_parse__rat(lean_object* x_1) {
@@ -1574,6 +1580,48 @@ lean_dec_ref(x_1);
 return x_6;
 }
 }
+static lean_object* _init_l_mnist__num__features() {
+_start:
+{
+lean_object* x_1; 
+x_1 = lean_unsigned_to_nat(784u);
+return x_1;
+}
+}
+static lean_object* _init_l_mnist__num__classes() {
+_start:
+{
+lean_object* x_1; 
+x_1 = lean_unsigned_to_nat(10u);
+return x_1;
+}
+}
+static lean_object* _init_l_initFn___closed__0_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_() {
+_start:
+{
+lean_object* x_1; 
+x_1 = lean_mk_string_unchecked("mnist_pruned.csv", 16, 16);
+return x_1;
+}
+}
+LEAN_EXPORT lean_object* l_initFn_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_() {
+_start:
+{
+lean_object* x_2; lean_object* x_3; lean_object* x_4; 
+x_2 = l_initFn___closed__0_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_;
+x_3 = lean_unsigned_to_nat(784u);
+x_4 = l_load__csv(x_2, x_3);
+return x_4;
+}
+}
+LEAN_EXPORT lean_object* l_initFn_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2____boxed(lean_object* x_1) {
+_start:
+{
+lean_object* x_2; 
+x_2 = l_initFn_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_();
+return x_2;
+}
+}
 lean_object* initialize_Init(uint8_t builtin);
 lean_object* initialize_Perceptron_Definitions(uint8_t builtin);
 lean_object* initialize_Perceptron_Basic(uint8_t builtin);
@@ -1611,6 +1659,17 @@ l_show__labeled__point___closed__2 = _init_l_show__labeled__point___closed__2();
 lean_mark_persistent(l_show__labeled__point___closed__2);
 l_show__labeled__point___closed__3 = _init_l_show__labeled__point___closed__3();
 lean_mark_persistent(l_show__labeled__point___closed__3);
+l_mnist__num__features = _init_l_mnist__num__features();
+lean_mark_persistent(l_mnist__num__features);
+l_mnist__num__classes = _init_l_mnist__num__classes();
+lean_mark_persistent(l_mnist__num__classes);
+l_initFn___closed__0_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_ = _init_l_initFn___closed__0_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_();
+lean_mark_persistent(l_initFn___closed__0_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_);
+res = l_initFn_00___x40_Perceptron_Data_2043360987____hygCtx___hyg_2_();
+if (lean_io_result_is_error(res)) return res;
+l_mnist__data = lean_io_result_get_value(res);
+lean_mark_persistent(l_mnist__data);
+lean_dec_ref(res);
 return lean_io_result_mk_ok(lean_box(0));
 }
 #ifdef __cplusplus

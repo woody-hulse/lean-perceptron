@@ -1,8 +1,8 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
  "outputs":
- {"o": ["c239a33368074276.olean"],
-  "i": "883c5a9c43a9d8fe.ilean",
+ {"o": ["6c63cdfacdec3e29.olean"],
+  "i": "f79109ec36e6d028.ilean",
   "c": "f2584c32e92d870c.c"},
  "log":
  [{"message":
@@ -33,7 +33,7 @@
          "ebdac04a93be9c29"],
         ["Perceptron.Definitions:importAllArts", "9ec09cf0493390fd"],
         ["Perceptron.Basic transitive imports (legacy)", "092242acaa674860"],
-        ["Perceptron.Basic:importAllArts", "c92f0cb38104d504"]]]]],
+        ["Perceptron.Basic:importAllArts", "0b29532f9163a800"]]]]],
     ["libs",
      [["import dynlibs", "00000000000006bb"],
       ["package external libraries", "00000000000006bb"],
@@ -42,11 +42,11 @@
   ["Lean 4.26.0, commit 9d4ad1273f6cea397c3066c2c83062a4410d16bf",
    "c1ab21c0a088cff7"],
   ["/Users/woodyhulse/Documents/lean-perceptron/Perceptron/Proofs.lean",
-   "e892755ce87707d6"],
+   "af520d0c4636995b"],
   ["options",
    [["-DmaxSynthPendingDepth=3", "c78e353d34de85d4"],
     ["-Dweak.linter.mathlibStandardSet=true", "8a155799906f2b42"],
     ["-DrelaxedAutoImplicit=false", "74a2b5546b55be80"],
     ["-Dpp.unicode.fun=true", "9b94070140457fab"]]],
   ["Module.leanArgs: #[]", "00000000000006bb"]],
- "depHash": "bef8ecb08c80e971"}
+ "depHash": "279b3764ed1e784e"}

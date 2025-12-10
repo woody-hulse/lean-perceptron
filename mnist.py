@@ -8,6 +8,151 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 import umap
 from tqdm import tqdm
+from typing import Tuple, Optional
+
+def find_wstar_perceptron(X: np.ndarray, y: np.ndarray, max_iter: int = 1000) -> Tuple[np.ndarray, int]:
+    n_samples, n_features = X.shape
+    
+    # Augment X with ones for bias
+    X_aug = np.hstack([X, np.ones((n_samples, 1))])
+    
+    # Initialize weights to zero
+    w = np.zeros(n_features + 1)
+    
+    num_updates = 0
+    for _ in range(max_iter):
+        made_update = False
+        for i in range(n_samples):
+            if y[i] * (X_aug[i] @ w) <= 0:
+                w = w + y[i] * X_aug[i]
+                num_updates += 1
+                made_update = True
+        if not made_update:
+            break  # Converged
+    
+    return w, num_updates
+
+
+def find_wstar_svm(X: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, float]:
+    """
+    Find the maximum margin separating hyperplane using SVM.
+    Returns normalized weights (unit norm).
+    
+    Args:
+        X: Feature matrix, shape (n_samples, n_features)
+        y: Labels, shape (n_samples,), values in {-1, +1}
+    
+    Returns:
+        w_normalized: Unit norm weight vector including bias, shape (n_features + 1,)
+        margin: The geometric margin
+    """
+    from sklearn.svm import SVC
+    
+    clf = SVC(kernel='linear', C=1e10)  # Large C = hard margin
+    clf.fit(X, y)
+    
+    w = clf.coef_[0]
+    b = clf.intercept_[0]
+    
+    # Augmented weight vector
+    w_aug = np.append(w, b)
+    
+    # Normalize to unit norm
+    norm = np.linalg.norm(w_aug)
+    w_normalized = w_aug / norm
+    
+    # Compute margin (distance from origin to hyperplane / norm of w)
+    # For normalized w, margin = min_i y_i * (w @ x_i)
+    X_aug = np.hstack([X, np.ones((len(X), 1))])
+    margins = y * (X_aug @ w_normalized)
+    margin = margins.min()
+    
+    return w_normalized, margin
+
+
+def compute_stats(X: np.ndarray, y: np.ndarray, w: np.ndarray) -> dict:
+    """
+    Compute R², γ, and convergence bound for given data and separator.
+    
+    Args:
+        X: Feature matrix, shape (n_samples, n_features)
+        y: Labels, shape (n_samples,)
+        w: Weight vector including bias, shape (n_features + 1,)
+    
+    Returns:
+        Dictionary with R_sq, gamma, bound, norm_w
+    """
+    X_aug = np.hstack([X, np.ones((len(X), 1))])
+    
+    # R² = max ||x_aug||²
+    R_sq = np.max(np.sum(X_aug**2, axis=1))
+    
+    # Normalize w for margin computation
+    norm_w = np.linalg.norm(w)
+    w_unit = w / norm_w if norm_w > 0 else w
+    
+    # γ = min margin with unit norm separator
+    margins = y * (X_aug @ w_unit)
+    gamma = margins.min()
+    
+    # Bound
+    bound = R_sq / (gamma ** 2) if gamma > 0 else float('inf')
+    
+    return {
+        'R_sq': R_sq,
+        'gamma': gamma,
+        'bound': bound,
+        'norm_w': norm_w,
+        'w_unit': w_unit
+    }
+
+
+def to_lean_rational(x: float, scale: int = 1000000) -> str:
+    """Convert float to Lean rational string."""
+    numer = int(round(x * scale))
+    return f"{numer}/{scale}"
+
+
+def to_lean_vector(w: np.ndarray, scale: int = 1000000) -> str:
+    """Convert numpy array to Lean vector notation."""
+    components = [to_lean_rational(x, scale) for x in w]
+    return "![" + ", ".join(components) + "]"
+
+
+def export_wstar_to_lean(w: np.ndarray, name: str = "wStar", scale: int = 1000000) -> str:
+    """Generate Lean definition for wstar."""
+    n = len(w)
+    vec_str = to_lean_vector(w, scale)
+    return f"def {name} : Fin {n} → ℚ := {vec_str}"
+
+
+# Example usage
+if __name__ == "__main__":
+    # Simple test data
+    X = np.array([
+        [3, 4],
+        [6, 8],
+        [-3, -4],
+        [-6, -8]
+    ], dtype=float)
+    y = np.array([1, 1, -1, -1], dtype=float)
+    
+    print("=== Perceptron ===")
+    w_perceptron, updates = find_wstar_perceptron(X, y)
+    print(f"Weights: {w_perceptron}")
+    print(f"Updates: {updates}")
+    stats = compute_stats(X, y, w_perceptron)
+    print(f"R² = {stats['R_sq']}, γ = {stats['gamma']:.4f}, bound = {stats['bound']:.2f}")
+    
+    print("\n=== SVM (max margin) ===")
+    w_svm, margin = find_wstar_svm(X, y)
+    print(f"Weights (normalized): {w_svm}")
+    print(f"Margin: {margin:.4f}")
+    stats = compute_stats(X, y, w_svm)
+    print(f"R² = {stats['R_sq']}, γ = {stats['gamma']:.4f}, bound = {stats['bound']:.2f}")
+    
+    print("\n=== Lean export ===")
+    print(export_wstar_to_lean(w_svm, "wStar"))
 
 def load_mnist():
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -182,7 +327,28 @@ def main():
     
     # print_lean_dataset("mnist_pruned", np.reshape(pruned_images, (len(pruned_images), -1))[:1000], pruned_labels[:1000])
     size = 1000
-    create_csv_dataset("mnist_pruned.csv", np.reshape(pruned_images[:size], (len(pruned_images[:size]), -1)), pruned_labels[:size])
+    # create_csv_dataset("mnist_pruned.csv", np.reshape(pruned_images[:size], (len(pruned_images[:size]), -1)), pruned_labels[:size])
+    return pruned_images[:size], pruned_labels[:size]
+    
 
 if __name__ == "__main__":
-    main()
+    images, labels = main()
+    X = images.reshape(-1, 784)
+    y = labels
+
+    print("=== Perceptron ===")
+    w_perceptron, updates = find_wstar_perceptron(X, y)
+    print(f"Weights: {w_perceptron}")
+    print(f"Updates: {updates}")
+    stats = compute_stats(X, y, w_perceptron)
+    print(f"R² = {stats['R_sq']}, γ = {stats['gamma']:.4f}, bound = {stats['bound']:.2f}")
+    
+    print("\n=== SVM (max margin) ===")
+    w_svm, margin = find_wstar_svm(X, y)
+    print(f"Weights (normalized): {w_svm}")
+    print(f"Margin: {margin:.4f}")
+    stats = compute_stats(X, y, w_svm)
+    print(f"R² = {stats['R_sq']}, γ = {stats['gamma']:.4f}, bound = {stats['bound']:.2f}")
+    
+    print("\n=== Lean export ===")
+    print(export_wstar_to_lean(w_svm, "wStar"))

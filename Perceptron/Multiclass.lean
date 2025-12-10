@@ -1,22 +1,25 @@
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic
 
+import Perceptron.Definitions
 import Perceptron.Basic
 import Perceptron.Data
-import Perceptron.Loader
+import Perceptron.Proofs
 
 open BigOperators Finset
 
-structure MultiClassPerceptron (nClasses nFeatures : ℕ) where
-  perceptrons : Fin nClasses → Perceptron nFeatures
+namespace MultiClassPerceptron
 
-/-- Given a dataset with multiple classes, turn it into n binary classification probelms -/
-def toOneVsAll {nClasses nFeatures : ℕ} (data : Dataset nFeatures) :
-    Fin nClasses → Dataset nFeatures :=
+structure T (num_classes num_features : ℕ) where
+  perceptrons : Fin num_classes → Perceptron.T num_features
+
+structure State (num_classes num_features : ℕ) where
+  states : Fin num_classes → Perceptron.State num_features
+
+/-- Given a list of LabeledPoints with n classes, turn it into n binary classification problems -/
+def to_one_vs_all {num_classes num_features : ℕ} (data : List (LabeledPoint num_features)) :
+    Fin num_classes → List (LabeledPoint num_features) :=
   fun cls =>
     data.filterMap fun dp =>
       if dp.label = (cls.val : ℚ) then
@@ -24,71 +27,91 @@ def toOneVsAll {nClasses nFeatures : ℕ} (data : Dataset nFeatures) :
       else
         some { features := dp.features, label := -1 }
 
-structure mcTrainState (nClasses nFeatures : ℕ) where
-  states : Fin nClasses → TrainState nFeatures
+def init_state (num_classes num_features) : State num_classes num_features :=
+  { states := fun _ => Perceptron.init_state num_features }
 
-def mcInitState (nClasses nFeatures) : mcTrainState nClasses nFeatures :=
-  { states := fun _ => initState nFeatures }
-
-/- Train each binary perceptron on its corresponding dataset -/
-def mcTrain {nClasses nFeatures : ℕ}
-    (data : Dataset nFeatures) (maxIter : ℕ := 100) : mcTrainState nClasses nFeatures :=
-  let oneVsAllData := toOneVsAll (nClasses := nClasses) data
-  let initialState := mcInitState nClasses nFeatures
-  (List.finRange nClasses).foldl
+/- Train each binary perceptron on its corresponding data -/
+def train {num_classes num_features : ℕ}
+    (data : List (LabeledPoint num_features)) (maxIter : ℕ := 100)
+    : State num_classes num_features :=
+  let oneVsAllData := to_one_vs_all (num_classes := num_classes) data
+  let initialState := init_state num_classes num_features
+  (List.finRange num_classes).foldl
     (fun state cls =>
       let binaryData := oneVsAllData cls
-      let trainedState := trainUntilConvergence binaryData maxIter
+      let trainedState := Perceptron.train_until_convergence binaryData maxIter
       let newStates :=
         fun c => if c = cls then trainedState else state.states c
       { states := newStates })
     initialState
 
-def mcShowWeights {nClasses nFeatures : ℕ}
-  (mcp : MultiClassPerceptron nClasses nFeatures)
-  (cls : Fin nClasses) (feature : Fin (nFeatures + 1)) : ℚ :=
+def show_weights {num_classes num_features : ℕ}
+  (mcp : T num_classes num_features)
+  (cls : Fin num_classes) (feature : Fin (num_features + 1)) : ℚ :=
   (mcp.perceptrons cls).weights feature
 
-def weightsToList {n : Nat} (w : Fin n → ℚ) : List ℚ :=
+def weights_to_list {n : Nat} (w : Fin n → ℚ) : List ℚ :=
   (List.finRange n).map (fun i => w i)
 
-def showConvergences {nClasses nFeatures : ℕ}
-    (state : mcTrainState nClasses nFeatures) : List String :=
-  (List.finRange nClasses).map fun cls =>
+def show_convergences {num_classes num_features : ℕ}
+    (state : State num_classes num_features) : List String :=
+  (List.finRange num_classes).map fun cls =>
     let ts := state.states cls
-    s!"  Class {cls.val}: {ts.numUpdates} updates"
+    s!"  Class {cls.val}: {ts.num_updates} updates"
 
-def mcPredict {nClasses nFeatures : ℕ}
-    (state : mcTrainState nClasses nFeatures)
-    (x : Fin nFeatures → ℚ) : List ℚ :=
-  (List.finRange nClasses).map fun cls =>
+def predict {num_classes num_features : ℕ}
+    (state : State num_classes num_features)
+    (x : Fin num_features → ℚ) : List ℚ :=
+  (List.finRange num_classes).map fun cls =>
     let ts := state.states cls
-    let p  := predict ts.perceptron x
+    let p  := Perceptron.predict ts.perceptron x
     sign p
 
-def showPredictions (n : ℕ) (data : Dataset n)
-    (state : mcTrainState 10 n) : IO Unit :=
+def show_predictions (n : ℕ) (data : List (LabeledPoint n))
+    (state : State 10 n) : IO Unit :=
   data.forM fun dp => do
-    let preds := mcPredict state dp.features
+    let preds := predict state dp.features
     IO.println s!"Predictions: {preds}"
-    showDataPoint dp 28 170 |> IO.println
+    show_labeled_point dp 28 170 |> IO.println
 
 #eval do
-  -- Load dataset
-  let ⟨nFeatures, data⟩ ← loadCSVDataset "mnist_pruned.csv" 784
+  -- Load data
+  let num_features := 784
+  let data ← load_csv "mnist_pruned.csv" num_features
   let smallData := data.take 10
-  IO.println s!"Loaded dataset with {data.length} samples and {nFeatures} features"
+  IO.println s!"Loaded data with {data.length} samples and {num_features} features"
 
   -- Train multiclass model
-  let nClasses := 10
-  let trainedState : mcTrainState nClasses nFeatures :=
-    mcTrain (nClasses := nClasses) smallData
+  let num_classes := 10
+  let trained_state : State num_classes num_features :=
+    train (num_classes := num_classes) smallData
   IO.println "Training completed."
 
   -- Convergence steps per class
   IO.println "Convergence steps per class:"
-  let convergences := showConvergences trainedState
+  let convergences := show_convergences trained_state
   convergences.forM IO.println
 
   -- Show predictions
-  showPredictions nFeatures smallData trainedState
+  show_predictions num_features smallData trained_state
+
+  -- Show accuracy
+  let correct_counts :=
+    (List.finRange num_classes).map fun cls =>
+      let ts := trained_state.states cls
+      let binary_data := to_one_vs_all (num_classes := num_classes) smallData cls
+      let correct :=
+        binary_data.filter (fun dp => Perceptron.correct? ts.perceptron dp) |>.length
+      (cls.val, correct, binary_data.length)
+  IO.println "Accuracy per class (correct / total):"
+  correct_counts.forM fun (cls, correct, total) =>
+    IO.println s!"  Class {cls}: {correct} / {total}"
+
+  -- Show weights
+  IO.println "Perceptron weights:"
+  (List.finRange num_classes).forM fun cls => do
+    let ts := trained_state.states cls
+    let weights := weights_to_list ts.perceptron.weights
+    IO.println s!"  Perceptron {cls.val}: {weights}"
+
+end MultiClassPerceptron
